@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Want to buy it?</title>
+  <title>Your 24/7 Employee</title>
   
   <!-- USER REQUESTED: Where to change YouTube video ID -->
   <script>
@@ -145,16 +145,13 @@
   </div>
 
   <script>
-    // Set YouTube video
     document.getElementById('youtube-embed').src = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}`;
     
-    // Supabase Configuration
     const SUPABASE_URL = 'https://nngxqnxfpwbtxviikbfa.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5uZ3hxbnhmcHdidHh2aWlrYmZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NDU3MDksImV4cCI6MjA4MTAyMTcwOX0.kfEXm4i4g3TCuOgPB6OY1joqRjMPghf8nfF5ZCJTCKU';
     
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
-    // Form Submission
     document.getElementById('lead-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -166,23 +163,19 @@
       const errorMsg = document.getElementById('error-msg');
       const errorText = document.getElementById('error-text');
       
-      // Reset states
       successMsg.classList.add('hidden');
       errorMsg.classList.add('hidden');
       
-      // Show loading
       submitBtn.disabled = true;
       btnText.textContent = 'Submitting...';
       btnSpinner.classList.remove('hidden');
       
       try {
-        // Try to insert the email
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
           .from('leads')
           .insert([{ email }]);
         
         if (error) {
-          // Check for duplicate email
           if (error.code === '23505' || error.message.includes('duplicate')) {
             errorMsg.classList.remove('hidden');
             errorText.textContent = '✉️ You\'re already on the list!';
@@ -190,7 +183,6 @@
             throw error;
           }
         } else {
-          // Success
           successMsg.classList.remove('hidden');
           document.getElementById('email').value = '';
         }
@@ -199,7 +191,6 @@
         errorMsg.classList.remove('hidden');
         errorText.textContent = 'Something went wrong. Please try again.';
       } finally {
-        // Reset button
         submitBtn.disabled = false;
         btnText.textContent = 'I\'m in';
         btnSpinner.classList.add('hidden');
